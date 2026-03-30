@@ -1,9 +1,12 @@
 import requests                                                 # Load network library
 import pandas as pd                                             # Load dataframe library
 import time                                                     # Load timing library
+# 1. Set API credentials (replace with your own keys)
 
-TMDB_API_KEY = "6da5591887843bb1f8ac7648489d4556"                              # Set TMDb credential
-OMDB_API_KEY = "?i=tt3896198&apikey=e1476484"                                      # Set OMDb credential
+TMDB_API_KEY = "<YOUR_TMDB_API_KEY>"                              # Set TMDb credential
+OMDB_API_KEY = "<YOUR_OMDB_API_KEY>"                            # Set OMDb credential
+
+# 2. Define function to fetch movies for a given year
 
 def fetch_movies(year):                                         # Define fetch function
     movies_data = []                                            # Initialize empty list
@@ -13,7 +16,9 @@ def fetch_movies(year):                                         # Define fetch f
         "primary_release_year": year,                           # Pass target year
         "sort_by": "revenue.desc"                               # Sort by box office
     }                                                           # Close parameters dict
-    
+
+# 3. Fetch top movies from TMDb and get details from OMDb
+
     response = requests.get(tmdb_url, params=params)            # Execute HTTP GET
     results = response.json().get("results", [])                # Extract results array
     
@@ -50,11 +55,15 @@ def fetch_movies(year):                                         # Define fetch f
         
     return movies_data                                          # Return final list
 
+# 4. Fetch movies for recent years and compile master dataset
+
 all_movies = []                                                 # Initialize master list
 for target_year in range(2023, 2027):                           # Loop recent years
     yearly_data = fetch_movies(target_year)                     # Call fetch function
     all_movies.extend(yearly_data)                              # Add to master list
-    
+
+# 5. Convert master list to DataFrame and export as CSV
+
 df = pd.DataFrame(all_movies)                                   # Convert list to DataFrame
-df.to_csv("the_audience_master.csv", index=False)               # Export data to CSV
+df.to_csv(r"E:\s23002167\Data Analytics\Projects\audience-sentiment-predictor-2026\Data\Raw\the_audience_master.csv", index=False)               # Export data to CSV
 print("Dataset generation complete. Saved as CSV.")             # Print success message
